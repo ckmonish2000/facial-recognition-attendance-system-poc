@@ -2,6 +2,7 @@ import numpy as np
 import face_recognition
 import cv2
 import os
+from datetime import datetime
 
 path = "img"
 
@@ -28,6 +29,25 @@ def encode_image(images):
         encoded_list.append(encode)
     
     return encoded_list
+
+
+def markattendance(name):
+    with open("attendance.csv","r+") as f:
+        DB = f.readlines()
+        name_lst = []
+        for line in DB:
+            entry= line.split(",")
+            print(entry)
+            name_lst.append(entry[0])
+        if(name not in name_lst):
+            print(name_lst)
+            now = datetime.now()
+            date = now.strftime('%H:%M:%S')
+            f.writelines(f'\n{name},{date}')
+        
+
+
+
 
 
 encode_img = encode_image(images)
@@ -59,7 +79,7 @@ while True:
         cv2.rectangle(img,(x1,y1),(x2,y2),(0,255,0),2)
         cv2.rectangle(img,(x1,y1-35),(x2,y2),cv2.FILLED)
         cv2.putText(img,name,(x1+6,y2-6),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)
-
+        markattendance(name)
         
 
     cv2.imshow("webcam",img)
